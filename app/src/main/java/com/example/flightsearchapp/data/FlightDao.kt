@@ -20,7 +20,6 @@ interface FlightDao {
     fun getDestinations(id: Int): Flow<List<airport>>
 
 
-
     @Query("SELECT * FROM favorite")
     fun getFavorites(): Flow<List<favorite>>
 

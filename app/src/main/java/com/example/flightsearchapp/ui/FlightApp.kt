@@ -10,7 +10,10 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun FlightApp(
-    viewModel: HomeViewModel = viewModel(factory = HomeViewModel.factory)
+    viewModel: HomeViewModel = viewModel(factory = HomeViewModel.factory),
+    searchViewModel: SearchViewModel = viewModel(
+        factory = SearchViewModel.Factory
+    )
 ) {
 
     val homeUiState = viewModel.homeUiState.collectAsState()
@@ -19,8 +22,11 @@ fun FlightApp(
 
         composable("home"){
             HomeScreen(
-                viewModel = viewModel
-            ) { navController.navigate("details") }
+                viewModel = viewModel,
+                searchViewModel = searchViewModel,
+                uiState = searchViewModel.uiState.collectAsState().value,
+                saveSearch = searchViewModel::saveSearch,
+                ) { navController.navigate("details") }
         }
         composable("details"){
             DetailsScreen(

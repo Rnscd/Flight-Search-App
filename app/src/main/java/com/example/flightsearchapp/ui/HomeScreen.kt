@@ -3,32 +3,39 @@ package com.example.flightsearchapp.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Card
-import androidx.compose.material.IconToggleButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
+    searchViewModel: SearchViewModel,
+    uiState: SearchUiState,
+    saveSearch: (String) -> Unit,
     onNav: () -> Unit,
 ) {
-    
-    var search by remember { mutableStateOf("") }
+    var search = uiState.searchSt
+
     val airports by viewModel.getAirports(search).collectAsState(initial = emptyList())
 
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(20.dp)) {
 
-        TextField(value = search, onValueChange = {
-            search = it
-            viewModel.getAirports(search)
-        }
+        TextField(
+            value = search,
+            onValueChange = {
+                search = it
+                saveSearch(search)
+                viewModel.getAirports(it)
+            },
+            label = { Text("Search") },
+            placeholder = { Text("Search airports...") }
         )
 
         if (search.isNotEmpty()) {
