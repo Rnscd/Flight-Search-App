@@ -23,7 +23,6 @@ fun FlightApp(
         composable("home"){
             HomeScreen(
                 viewModel = viewModel,
-                searchViewModel = searchViewModel,
                 uiState = searchViewModel.uiState.collectAsState().value,
                 saveSearch = searchViewModel::saveSearch,
                 ) { navController.navigate("details") }

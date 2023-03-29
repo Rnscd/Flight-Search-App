@@ -13,7 +13,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
     name = LAYOUT_PREFERENCE_NAME
 )
 class FlightApplication: Application() {
-    val database: AppDatabase by lazy { AppDatabase.getDatabase(this) }
+    val database: AppDatabase by lazy { AppDatabase.getDatabase(this)}
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
     override fun onCreate() {

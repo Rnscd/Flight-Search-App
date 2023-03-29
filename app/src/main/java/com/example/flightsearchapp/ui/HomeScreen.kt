@@ -6,15 +6,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.first
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
-    searchViewModel: SearchViewModel,
     uiState: SearchUiState,
     saveSearch: (String) -> Unit,
     onNav: () -> Unit,
@@ -24,27 +23,30 @@ fun HomeScreen(
     val airports by viewModel.getAirports(search).collectAsState(initial = emptyList())
 
     Column(modifier = Modifier
-        .fillMaxSize()
+        .fillMaxWidth()
         .padding(20.dp)) {
 
         TextField(
             value = search,
             onValueChange = {
                 search = it
-                saveSearch(search)
+                saveSearch(it)
                 viewModel.getAirports(it)
             },
             label = { Text("Search") },
-            placeholder = { Text("Search airports...") }
+            placeholder = { Text("Search airports...") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
         )
 
         if (search.isNotEmpty()) {
-            LazyColumn() {
+            LazyColumn(modifier = Modifier.fillMaxWidth()
+            ) {
                 items(airports.size) {
                     ColumnAirports(
                         onClick = {
                             viewModel.getResult(airports[it].id)
-                            onNav() // Invoke the onNav lambda to navigate to "details" destination
+                            onNav()
                         },
                         name = airports[it].name,
                         iata = airports[it].iata_code
@@ -54,10 +56,16 @@ fun HomeScreen(
         }  else{
             val favorites by viewModel.getFavorites().collectAsState(initial = emptyList())
             if (favorites.isNotEmpty()) {
-                LazyColumn() {
-                    items(favorites.size) {
-                        Text(text = favorites[it].departure_code)
-                        Text(text = favorites[it].destination_code)
+                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = "Saved Routes")
+
+                    LazyColumn() {
+                        items(favorites.size) {
+                            FavoritesColumn(
+                                departure = favorites[it].departure_code,
+                                destination = favorites[it].destination_code
+                            )
+                        }
                     }
                 }
             }else{
@@ -80,3 +88,18 @@ fun ColumnAirports(
     }
 }
 
+@Composable
+fun FavoritesColumn(departure: String, destination: String) {
+    Column(modifier = Modifier.fillMaxWidth().padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Row() {
+            Text(text = "Departure")
+            Spacer(modifier = Modifier.width(30.dp))
+            Text(text = "Destination")
+        }
+        Row() {
+            Text(text = departure, Modifier.padding(10.dp))
+            Spacer(modifier = Modifier.width(30.dp))
+            Text(text = destination, Modifier.padding(10.dp))
+        }
+    }
+}

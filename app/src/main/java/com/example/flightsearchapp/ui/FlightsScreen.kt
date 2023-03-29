@@ -2,26 +2,25 @@ package com.example.flightsearchapp.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.flightsearchapp.data.favorite
-import kotlin.math.abs
 
 @Composable
 fun DetailsScreen(
-    homeUiState: State<HomeUiState>, modifier: Modifier = Modifier.fillMaxSize(),
+    homeUiState: State<HomeUiState>,
     viewModel: HomeViewModel,
     ) {
 
     val departure = homeUiState.value.airportSt
     val destinations = homeUiState.value.destination
-    LazyColumn(){
+    LazyColumn(modifier = Modifier.fillMaxWidth()){
         items(destinations.size){
             CardFlights(
                 departureCode = departure.iata_code,
@@ -47,10 +46,12 @@ fun CardFlights(
     departureName: String,
     destinationCode: String,
     destinationName: String,
-    onCheck: () -> Unit
+    onFavorite: () -> Unit
 ) {
-    Card(modifier = Modifier.padding(10.dp)) {
-        Column() {
+    Card(modifier = Modifier
+        .padding(10.dp)
+        .fillMaxSize()) {
+        Column(Modifier.padding(5.dp)) {
             Text(text = "DEPARTURE")
             Row() {
                 Text(text = departureCode, fontWeight = FontWeight.Bold)
@@ -66,27 +67,9 @@ fun CardFlights(
                 Text(text = destinationName)
             }
 
-            Button(onClick = onCheck) {
+            IconButton(onClick = onFavorite,  modifier = Modifier.padding(start = 100.dp)) {
+                Icon(imageVector = Icons.Default.Star, contentDescription = "favorite")
             }
         }
     }
 }
-
-
-/*
-   Column() {
-       Text(text = homeUiState.value.airportSt.name)
-       Text(text = homeUiState.value.airportSt.iata_code)
-       Text(text = homeUiState.value.airportSt.passengers.toString())
-
-       val destinations = homeUiState.value.destination.collectAsState(initial = emptyList()).value
-       if (destinations.isNotEmpty()) {
-           Text(text = destinations[0].name)
-           Text(text = destinations[0].iata_code)
-           Text(text = destinations[0].passengers.toString())
-       } else {
-           Text(text = "No destinations found.")
-       }
-   }
-
-    */
